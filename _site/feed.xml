@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-05-17T18:17:12+08:00</updated><id>http://localhost:4000/</id><title type="html">寒咯</title><subtitle>寒的个人博客</subtitle><author><name>Xuehan Gong</name></author><entry><title type="html">YYModel解析（一）</title><link href="http://localhost:4000/2017/05/16/YYModel/" rel="alternate" type="text/html" title="YYModel解析（一）" /><published>2017-05-16T00:00:00+08:00</published><updated>2017-05-16T00:00:00+08:00</updated><id>http://localhost:4000/2017/05/16/YYModel</id><content type="html" xml:base="http://localhost:4000/2017/05/16/YYModel/">&lt;p&gt;Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-05-17T18:33:41+08:00</updated><id>http://localhost:4000/</id><title type="html">寒咯</title><subtitle>寒的个人博客</subtitle><author><name>Xuehan Gong</name></author><entry><title type="html">YYModel解析（一）</title><link href="http://localhost:4000/2017/05/16/YYModel/" rel="alternate" type="text/html" title="YYModel解析（一）" /><published>2017-05-16T00:00:00+08:00</published><updated>2017-05-16T00:00:00+08:00</updated><id>http://localhost:4000/2017/05/16/YYModel</id><content type="html" xml:base="http://localhost:4000/2017/05/16/YYModel/">&lt;p&gt;Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions&lt;/p&gt;
 
 &lt;h2 id=&quot;引子&quot;&gt;引子&lt;/h2&gt;
 &lt;p&gt;在使用 YYModel 过程中，我最先也是使用频率最高的方法就是：&lt;/p&gt;
@@ -197,7 +197,9 @@
 &lt;h3 id=&quot;reference&quot;&gt;Reference&lt;/h3&gt;
 &lt;p&gt;&lt;a href=&quot;http://www.jianshu.com/p/b6282410765b&quot;&gt;YYModel超详细解析&lt;/a&gt;&lt;br /&gt;
 &lt;a href=&quot;https://kangzubin.com/null-and-nil-in-objective-c/#more&quot;&gt;Objective-C 中 NULL、nil、Nil、NSNull 的定义及不同&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://nshipster.cn/nil/&quot;&gt;nil / Nil / NULL / NSNull&lt;/a&gt;&lt;/p&gt;</content><author><name>Xuehan Gong</name></author><summary type="html">Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions</summary></entry><entry><title type="html">Blog</title><link href="http://localhost:4000/2017/05/16/Blog/" rel="alternate" type="text/html" title="Blog" /><published>2017-05-16T00:00:00+08:00</published><updated>2017-05-16T00:00:00+08:00</updated><id>http://localhost:4000/2017/05/16/Blog</id><content type="html" xml:base="http://localhost:4000/2017/05/16/Blog/">&lt;p&gt;简述博客搭建过程，主要记录搭建过程中遇到的一些问题，和感兴趣的东西。&lt;/p&gt;
+&lt;a href=&quot;http://nshipster.cn/nil/&quot;&gt;nil / Nil / NULL / NSNull&lt;/a&gt;&lt;/p&gt;</content><author><name>Xuehan Gong</name></author><summary type="html">Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions</summary></entry><entry><title type="html">Blog 申明</title><link href="http://localhost:4000/2017/05/16/Blog/" rel="alternate" type="text/html" title="Blog 申明" /><published>2017-05-16T00:00:00+08:00</published><updated>2017-05-16T00:00:00+08:00</updated><id>http://localhost:4000/2017/05/16/Blog</id><content type="html" xml:base="http://localhost:4000/2017/05/16/Blog/">&lt;p&gt;我的博客主题来自&lt;a href=&quot;https://github.com/mzlogin/mzlogin.github.io&quot;&gt;这里&lt;/a&gt;刚刚搭建，目前只供自己使用，还有很多东西没有来得及修改，很多地方都还是主题博主的设置。如有任何侵权，请马上告知，我接10层锅。&lt;/p&gt;
+
+&lt;p&gt;简述博客搭建过程，主要记录搭建过程中遇到的一些问题，和感兴趣的东西。&lt;/p&gt;
 
 &lt;p&gt;1.搭建的过程比较简单，而且网上有大量资源，而且内容大同小异，以下两篇是我参考的文章：&lt;/p&gt;
 &lt;ul&gt;
@@ -215,4 +217,4 @@
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;http://www.jianshu.com/p/3cb5c6f2421c/&quot;&gt;如何优雅的使用 Sublime Text3&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;http://blog.csdn.net/github_32886825/article/details/52930195&quot;&gt;使用Sublime Text 3进行Markdown 编辑+实时预览&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Xuehan Gong</name></author><summary type="html">简述博客搭建过程，主要记录搭建过程中遇到的一些问题，和感兴趣的东西。</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Xuehan Gong</name></author><summary type="html">我的博客主题来自这里刚刚搭建，目前只供自己使用，还有很多东西没有来得及修改，很多地方都还是主题博主的设置。如有任何侵权，请马上告知，我接10层锅。</summary></entry></feed>
