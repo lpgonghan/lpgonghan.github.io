@@ -1,1 +1,218 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-05-16T18:08:50+08:00</updated><id>http://localhost:4000/</id><title type="html">寒咯</title><subtitle>寒的个人博客</subtitle><author><name>Xuehan Gong</name></author></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-05-17T18:17:12+08:00</updated><id>http://localhost:4000/</id><title type="html">寒咯</title><subtitle>寒的个人博客</subtitle><author><name>Xuehan Gong</name></author><entry><title type="html">YYModel解析（一）</title><link href="http://localhost:4000/2017/05/16/YYModel/" rel="alternate" type="text/html" title="YYModel解析（一）" /><published>2017-05-16T00:00:00+08:00</published><updated>2017-05-16T00:00:00+08:00</updated><id>http://localhost:4000/2017/05/16/YYModel</id><content type="html" xml:base="http://localhost:4000/2017/05/16/YYModel/">&lt;p&gt;Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions&lt;/p&gt;
+
+&lt;h2 id=&quot;引子&quot;&gt;引子&lt;/h2&gt;
+&lt;p&gt;在使用 YYModel 过程中，我最先也是使用频率最高的方法就是：&lt;/p&gt;
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;instancetype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;modelWithJSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSDictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_yy_dictionaryWithJSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;modelWithDictionary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;方法中的第一步将 json 对象转为 NSDictionary&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 处理接收到的 JSON，目的是转换为 NSDictionary 输出
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSDictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;_yy_dictionaryWithJSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kCFNull&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSDictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jsonData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isKindOfClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSDictionary&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isKindOfClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;jsonData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dataUsingEncoding&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSUTF8StringEncoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isKindOfClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSData&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;jsonData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jsonData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+         &lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSJSONSerialization&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;JSONObjectWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jsonData&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kNilOptions&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+         &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isKindOfClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSDictionary&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;此处判断 json 为空的时候，为什么使用 json == (id)KCFNull?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;objective-c-中的-nullnilnil-定义是什么使用场景是什么&quot;&gt;Objective-C 中的 NULL、nil、Nil 定义是什么？使用场景是什么？&lt;/h2&gt;
+&lt;h3 id=&quot;1使用&quot;&gt;1.使用&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;/images/blog/2017-05-16-YYModel-01.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;可以看到，从 &lt;strong&gt;使用方式和结果上来说 &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;nil&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Nil&lt;/code&gt; 并没有明显区别。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2定义&quot;&gt;2.定义&lt;/h3&gt;
+&lt;p&gt;我们可以在 &lt;code class=&quot;highlighter-rouge&quot;&gt;Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/IPhoneSimulator.sdk/user/include&lt;/code&gt; 目录下找到它们的定义。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;NULL&lt;/strong&gt; 定义在 &lt;code class=&quot;highlighter-rouge&quot;&gt;usr/include/sys/_types/_null.h&lt;/code&gt; 文件里&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#ifndef NULL 
+#define NULL  __DARWIN_NULL
+#endif  &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* NULL */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;nil&lt;/strong&gt; 定义在&lt;code class=&quot;highlighter-rouge&quot;&gt;uusr/include/objc/objc.h&lt;/code&gt; 文件里&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#ifndef nil
+#  if __has_feature(cxx_nullptr)
+#    define nil nullptr
+#  else
+#    define nil __DARWIN_NULL
+#  endif
+#endif
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Nil&lt;/strong&gt; 定义在&lt;code class=&quot;highlighter-rouge&quot;&gt;usr/include/objc/objc.h&lt;/code&gt; 文件里&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#ifndef Nil
+#  if __has_feature(cxx_nullptr)
+#    define Nil nullptr
+#  else
+#    define Nil __DARWIN_NULL
+#  endif
+#endif
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;nil 和 Nil 的定义中 &lt;code class=&quot;highlighter-rouge&quot;&gt;__has_feature(cxx_nullptr)&lt;/code&gt; 用于判断当前环境是否有 C++ 的 nullptr 特性，如果有，定义为 nullptr，否则定义为 &lt;code class=&quot;highlighter-rouge&quot;&gt;__DARWIN_NULL&lt;/code&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;所以在 Objective-C 中 NULL, nil, Nil 的最终定义都指向一个宏定义 &lt;code class=&quot;highlighter-rouge&quot;&gt;__DARWIN_NULL&lt;/code&gt;，而它定义在&lt;code class=&quot;highlighter-rouge&quot;&gt;usr/include/objc/objc.h&lt;/code&gt;文件里&lt;/p&gt;
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#ifdef __cplusplus
+#  ifdef __GNUG__
+#    define __DARWIN_NULL __null
+#  else &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* ! __GNUG__ */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#    ifdef __LP64__
+#      define __DARWIN_NULL (0L)
+#    else &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* !__LP64__ */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#      define __DARWIN_NULL 0
+#    endif &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* __LP64__ */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#  endif &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* __GNUG__ */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#else &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* ! __cplusplus */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+#  define __DARWIN_NULL ((void *)0)
+#endif &lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* __cplusplus */&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;可以看到 &lt;code class=&quot;highlighter-rouge&quot;&gt;__DARWIN_NULL&lt;/code&gt; 只有在 C++ 环境下，不同编译器的取值不同。所以 Objective-C 中 &lt;code class=&quot;highlighter-rouge&quot;&gt;__DARWIN_NULL&lt;/code&gt; 的取值是：&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#define NULL ((void*)0)
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;至此我们验证了之前的结论，&lt;strong&gt;从定义上来说 &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;nil&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Nil&lt;/code&gt; 也是完全相等的。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;3tips&quot;&gt;3.Tips&lt;/h3&gt;
+&lt;p&gt;Objective-C 是以 C 语言为基础的，在 C 语言中对空指针进行操作，程序会由于越界访问而崩溃；但是在 Objective-C 中给 nil 发送消息，程序不会崩溃。&lt;a href=&quot;http://blog.csdn.net/onlyou930/article/details/7283084&quot;&gt;这里&lt;/a&gt; 从 arm 层源码对其进行了解释。&lt;/p&gt;
+
+&lt;h2 id=&quot;objective-c-中的-nsnull&quot;&gt;Objective-C 中的 NSNull&lt;/h2&gt;
+&lt;h3 id=&quot;1-定义&quot;&gt;1. 定义&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;NSNull&lt;/strong&gt; 定义在 &lt;code class=&quot;highlighter-rouge&quot;&gt;NSNull.h&lt;/code&gt; 文件里：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#import &amp;lt;Foundation/NSObject.h&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NS_ASSUME_NONNULL_BEGIN&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NSNull&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NSObject&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSCopying&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSSecureCoding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSNull&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;NS_ASSUME_NONNULL_END&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;从上述定义中，我们可知 NSNull 是一个 Objective-C 对象，是一个用于表示空值的类，而且它只有一个单例方法：+[NSNull null]，一般用于在集合对象中保存一个空的占位对象。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;2-与-nil-区别&quot;&gt;2. 与 nil 区别&lt;/h3&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;在 Foundation 集合对象（NSArray、NSDictionary、NSSet 等）中， nil 通常被用于表示集合对象结束的标志，因此无法用 nil 来存储一个空值，所以一般用 [NSNull null] 空对象来存储。另外，在 NSDictionary 的 -objectForKey: 方法中，如果当前字典中 key 对应的值不存在时，该方法会返回 nil，表明当前 key 在字典中未添加，但是如果我们想明确表示某一 key 已经在字典中添加，但是它没有值，这时候就可以用 [NSNull null] 来赋值表示。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 当 NSArray 里遇到 nil 时，就说明这个数组对象的元素截止了，即 NSArray 只关注 nil 之前的对象，nil 之后的对象会被抛弃。
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSArray&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;arrayWithObjects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;one&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;@&quot;two&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 错误的使用
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSMutableDictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dict&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSMutableDictionary&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dictionary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dict&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;forKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;someKey&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// 正确的使用
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSMutableDictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dict&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSMutableDictionary&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;dictionary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dict&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSNull&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;forKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;@&quot;someKey&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;结论&quot;&gt;结论&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;不管是 NULL、nil 还是 Nil，它们本质上是一样的，都是 (void *)0，只是写法不同。这样做的意义是为了区分不同的数据类型，虽然它们值相同，但我们需要理解它们之间的字面意义并用于不同场景，让代码更加明确，增加可读性。&lt;/p&gt;
+
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;&lt;strong&gt;标志&lt;/strong&gt;&lt;/th&gt;
+        &lt;th style=&quot;text-align: left&quot;&gt;&lt;strong&gt;值&lt;/strong&gt;&lt;/th&gt;
+        &lt;th style=&quot;text-align: left&quot;&gt;&lt;strong&gt;含义&lt;/strong&gt;&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;NULL&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;(void *)0&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;C 指针的字面空值&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;nil&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;(id)0&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;Objective-C 对象的字面空值&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Nil&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;(Class)0&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;Objective-C 类的字面空值&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;NSNull&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;[NSNull null]&lt;/td&gt;
+        &lt;td style=&quot;text-align: left&quot;&gt;用来表示空值的 Objective-C 对象&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;kniloptions&quot;&gt;kNilOptions&lt;/h2&gt;
+&lt;p&gt;kNilOptions is an old constant intended to document that the 0 is not just any magic zero, but stands for “no options”. &lt;br /&gt;
+如果枚举值需要传入0，但是枚举中又没有定义0，那么就可以使用 kNilOptions，代表不选择现有的枚举值。&lt;/p&gt;
+
+&lt;div class=&quot;language-objc highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;NS_OPTIONS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSUInteger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NSJSONReadingOptions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSJSONReadingMutableContainers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1UL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSJSONReadingMutableLeaves&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1UL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;NSJSONReadingAllowFragments&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1UL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NS_ENUM_AVAILABLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;NSDictionary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dict&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NSJSONSerialization&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;JSONObjectWithData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jsonData&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kNilOptions&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;此处传入参数 kNilOptions 即解析出来的数据不可改。&lt;/p&gt;
+
+&lt;h3 id=&quot;reference&quot;&gt;Reference&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.jianshu.com/p/b6282410765b&quot;&gt;YYModel超详细解析&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;https://kangzubin.com/null-and-nil-in-objective-c/#more&quot;&gt;Objective-C 中 NULL、nil、Nil、NSNull 的定义及不同&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://nshipster.cn/nil/&quot;&gt;nil / Nil / NULL / NSNull&lt;/a&gt;&lt;/p&gt;</content><author><name>Xuehan Gong</name></author><summary type="html">Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions</summary></entry><entry><title type="html">Blog</title><link href="http://localhost:4000/2017/05/16/Blog/" rel="alternate" type="text/html" title="Blog" /><published>2017-05-16T00:00:00+08:00</published><updated>2017-05-16T00:00:00+08:00</updated><id>http://localhost:4000/2017/05/16/Blog</id><content type="html" xml:base="http://localhost:4000/2017/05/16/Blog/">&lt;p&gt;简述博客搭建过程，主要记录搭建过程中遇到的一些问题，和感兴趣的东西。&lt;/p&gt;
+
+&lt;p&gt;1.搭建的过程比较简单，而且网上有大量资源，而且内容大同小异，以下两篇是我参考的文章：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.jianshu.com/p/8f843034c7ec&quot;&gt;“授人以渔”的教你搭建个人独立博客&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.jianshu.com/p/4fd3cb0a11da&quot;&gt;我的 Github 个人博客是怎样炼成的&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2.Jekyll&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;使用教程 &lt;a href=&quot;https://www.youtube.com/watch?v=IINPHVVrF5Q&amp;amp;list=PLWjCJDeWfDdfVEcLGAfdJn_HXyM4Y7_k-&quot;&gt;Youtube Jekyll&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;用 terminal &lt;code class=&quot;highlighter-rouge&quot;&gt;cd /repository根目录下&lt;/code&gt; 运行 &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle exec jekyll serve&lt;/code&gt; ，然后就可以在浏览器输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost:4000&lt;/code&gt; 进行本地调试。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;3.Sublime Text 3&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.jianshu.com/p/3cb5c6f2421c/&quot;&gt;如何优雅的使用 Sublime Text3&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://blog.csdn.net/github_32886825/article/details/52930195&quot;&gt;使用Sublime Text 3进行Markdown 编辑+实时预览&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Xuehan Gong</name></author><summary type="html">简述博客搭建过程，主要记录搭建过程中遇到的一些问题，和感兴趣的东西。</summary></entry></feed>

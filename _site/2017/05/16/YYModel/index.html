@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>YYModel解析（一） &mdash; 寒咯</title>
+    <link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css">
+    <link rel="stylesheet" href="/assets/vendor/primer-markdown/dist/user-content.min.css">
+    <link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css">
+    <link rel="stylesheet" href="/assets/css/components/collection.css">
+    <link rel="stylesheet" href="/assets/css/components/repo-card.css">
+    <link rel="stylesheet" href="/assets/css/sections/repo-list.css">
+    <link rel="stylesheet" href="/assets/css/sections/mini-repo-list.css">
+    <link rel="stylesheet" href="/assets/css/components/boxed-group.css">
+    <link rel="stylesheet" href="/assets/css/globals/common.css">
+    <link rel="stylesheet" href="/assets/vendor/share.js/dist/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/globals/responsive.css">
+    <link rel="stylesheet" href="/assets/css/posts/index.css">
+    <!-- Latest compiled and minified CSS -->
+    
+
+    
+    <link rel="canonical" href="http://localhost:4000/2017/05/16/YYModel/">
+    <link rel="alternate" type="application/atom+xml" title="寒咯" href="/feed.xml">
+    <link rel="shortcut icon" href="/icon.ico">
+    
+    <meta property="og:title" content="YYModel解析（一）">
+      
+    <meta name="keywords" content="YYModel, 解析, Null, nil, Nil, NSNull, Objective-C, iOS">
+    <meta name="og:keywords" content="YYModel, 解析, Null, nil, Nil, NSNull, Objective-C, iOS">
+      
+    <meta name="description" content="Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions">
+    <meta name="og:description" content="Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions">
+      
+    
+    
+        
+    
+    <meta property="og:url" content="http://localhost:4000/2017/05/16/YYModel/">
+    <meta property="og:site_name" content="寒咯">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="zh_CN" />
+    
+    <meta property="article:published_time" content="2017-05-16">
+    
+    <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/js/jquery-ui.js"></script>
+    <script type="text/javascript">
+    function toggleMenu() {
+        var nav = document.getElementsByClassName("site-header-nav")[0];
+        if (nav.style.display == "inline-flex") {
+          nav.style.display = "none";
+        } else {
+          nav.style.display = "inline-flex";
+        }
+    }
+    </script>
+</head>
+<body class="" data-mz="">
+    <header class="site-header">
+        <div class="container">
+            <h1><a href="/" title="寒咯"><span class="octicon octicon-mark-github"></span> 寒咯</a></h1>
+            <button class="collapsed mobile-visible" type="button" onclick="toggleMenu();">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <nav class="site-header-nav" role="navigation">
+                
+                <a href="/" class=" site-header-nav-item" target="" title="首页">首页</a>
+                
+                <a href="/categories/" class=" site-header-nav-item" target="" title="分类">分类</a>
+                
+                <a href="/wiki/" class=" site-header-nav-item" target="" title="维基">维基</a>
+                
+                <a href="/links/" class=" site-header-nav-item" target="" title="链接">链接</a>
+                
+                <a href="/about/" class=" site-header-nav-item" target="" title="关于">关于</a>
+                
+            </nav>
+        </div>
+    </header>
+    <!-- / header -->
+
+    <section class="collection-head small geopattern" data-pattern-id="YYModel解析（一）">
+<div class="container">
+  <div class="columns">
+    <div class="column three-fourths">
+      <div class="collection-title">
+        <h1 class="collection-header">YYModel解析（一）</h1>
+        <div class="collection-info">
+          
+          <span class="meta-info">
+            <span class="octicon octicon-calendar"></span> 2017/05/16
+          </span>
+          
+          
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href="/categories/#iOS" title="iOS">iOS</a>
+          </span>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<!-- / .banner -->
+<section class="container content">
+<div class="columns">
+  <div class="column three-fourths" >
+    <article class="article-content markdown-body">
+    <p>Objective-C 中的 Null、nil、Nil、NSNull 和 kNilOptions</p>
+
+<h2 id="引子">引子</h2>
+<p>在使用 YYModel 过程中，我最先也是使用频率最高的方法就是：</p>
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">modelWithJSON</span><span class="p">:(</span><span class="n">id</span><span class="p">)</span><span class="nv">json</span> <span class="p">{</span>
+    <span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dic</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nf">_yy_dictionaryWithJSON</span><span class="p">:</span><span class="n">json</span><span class="p">];</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="nf">modelWithDictionary</span><span class="p">:</span><span class="n">dic</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>方法中的第一步将 json 对象转为 NSDictionary</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="c1">// 处理接收到的 JSON，目的是转换为 NSDictionary 输出
+</span><span class="k">+</span> <span class="p">(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nf">_yy_dictionaryWithJSON</span><span class="p">:(</span><span class="n">id</span><span class="p">)</span><span class="nv">json</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">json</span> <span class="o">||</span> <span class="n">json</span> <span class="o">==</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">kCFNull</span><span class="p">)</span> <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dic</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="n">NSData</span> <span class="o">*</span><span class="n">jsonData</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">json</span> <span class="nf">isKindOfClass</span><span class="p">:[</span><span class="n">NSDictionary</span> <span class="nf">class</span><span class="p">]])</span> <span class="p">{</span>
+        <span class="n">dic</span> <span class="o">=</span> <span class="n">json</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">([</span><span class="n">json</span> <span class="nf">isKindOfClass</span><span class="p">:[</span><span class="n">NSString</span> <span class="nf">class</span><span class="p">]])</span> <span class="p">{</span>
+        <span class="n">jsonData</span> <span class="o">=</span> <span class="p">[(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">json</span> <span class="nf">dataUsingEncoding</span> <span class="p">:</span> <span class="n">NSUTF8StringEncoding</span><span class="p">];</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">([</span><span class="n">json</span> <span class="nf">isKindOfClass</span><span class="p">:[</span><span class="n">NSData</span> <span class="nf">class</span><span class="p">]])</span> <span class="p">{</span>
+        <span class="n">jsonData</span> <span class="o">=</span> <span class="n">json</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">jsonData</span><span class="p">)</span> <span class="p">{</span>
+         <span class="n">dic</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSJSONSerialization</span> <span class="nf">JSONObjectWithData</span><span class="p">:</span><span class="n">jsonData</span> <span class="nf">options</span><span class="p">:</span><span class="n">kNilOptions</span> <span class="n">error</span><span class="o">:</span><span class="nb">NULL</span><span class="p">];</span>
+         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">dic</span> <span class="nf">isKindOfClass</span><span class="p">:[</span><span class="n">NSDictionary</span> <span class="nf">class</span><span class="p">]])</span> <span class="n">dic</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+     <span class="p">}</span>
+     <span class="k">return</span> <span class="n">dic</span><span class="p">;</span>
+ <span class="p">}</span>
+</code></pre>
+</div>
+
+<p><strong>此处判断 json 为空的时候，为什么使用 json == (id)KCFNull?</strong></p>
+
+<h2 id="objective-c-中的-nullnilnil-定义是什么使用场景是什么">Objective-C 中的 NULL、nil、Nil 定义是什么？使用场景是什么？</h2>
+<h3 id="1使用">1.使用</h3>
+<p><img src="/images/blog/2017-05-16-YYModel-01.png" alt="" /></p>
+
+<p>可以看到，从 <strong>使用方式和结果上来说 <code class="highlighter-rouge">NULL</code>、<code class="highlighter-rouge">nil</code>、<code class="highlighter-rouge">Nil</code> 并没有明显区别。</strong></p>
+
+<h3 id="2定义">2.定义</h3>
+<p>我们可以在 <code class="highlighter-rouge">Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/IPhoneSimulator.sdk/user/include</code> 目录下找到它们的定义。</p>
+
+<p><strong>NULL</strong> 定义在 <code class="highlighter-rouge">usr/include/sys/_types/_null.h</code> 文件里</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#ifndef NULL 
+#define NULL  __DARWIN_NULL
+#endif  </span><span class="cm">/* NULL */</span><span class="cp">
+</span></code></pre>
+</div>
+
+<p><strong>nil</strong> 定义在<code class="highlighter-rouge">uusr/include/objc/objc.h</code> 文件里</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#ifndef nil
+#  if __has_feature(cxx_nullptr)
+#    define nil nullptr
+#  else
+#    define nil __DARWIN_NULL
+#  endif
+#endif
+</span></code></pre>
+</div>
+
+<p><strong>Nil</strong> 定义在<code class="highlighter-rouge">usr/include/objc/objc.h</code> 文件里</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#ifndef Nil
+#  if __has_feature(cxx_nullptr)
+#    define Nil nullptr
+#  else
+#    define Nil __DARWIN_NULL
+#  endif
+#endif
+</span></code></pre>
+</div>
+
+<blockquote>
+  <p>nil 和 Nil 的定义中 <code class="highlighter-rouge">__has_feature(cxx_nullptr)</code> 用于判断当前环境是否有 C++ 的 nullptr 特性，如果有，定义为 nullptr，否则定义为 <code class="highlighter-rouge">__DARWIN_NULL</code>。</p>
+</blockquote>
+
+<p>所以在 Objective-C 中 NULL, nil, Nil 的最终定义都指向一个宏定义 <code class="highlighter-rouge">__DARWIN_NULL</code>，而它定义在<code class="highlighter-rouge">usr/include/objc/objc.h</code>文件里</p>
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#ifdef __cplusplus
+#  ifdef __GNUG__
+#    define __DARWIN_NULL __null
+#  else </span><span class="cm">/* ! __GNUG__ */</span><span class="cp">
+#    ifdef __LP64__
+#      define __DARWIN_NULL (0L)
+#    else </span><span class="cm">/* !__LP64__ */</span><span class="cp">
+#      define __DARWIN_NULL 0
+#    endif </span><span class="cm">/* __LP64__ */</span><span class="cp">
+#  endif </span><span class="cm">/* __GNUG__ */</span><span class="cp">
+#else </span><span class="cm">/* ! __cplusplus */</span><span class="cp">
+#  define __DARWIN_NULL ((void *)0)
+#endif </span><span class="cm">/* __cplusplus */</span><span class="cp">
+</span></code></pre>
+</div>
+
+<p>可以看到 <code class="highlighter-rouge">__DARWIN_NULL</code> 只有在 C++ 环境下，不同编译器的取值不同。所以 Objective-C 中 <code class="highlighter-rouge">__DARWIN_NULL</code> 的取值是：</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#define NULL ((void*)0)
+</span></code></pre>
+</div>
+
+<p>至此我们验证了之前的结论，<strong>从定义上来说 <code class="highlighter-rouge">NULL</code>、<code class="highlighter-rouge">nil</code>、<code class="highlighter-rouge">Nil</code> 也是完全相等的。</strong></p>
+
+<h3 id="3tips">3.Tips</h3>
+<p>Objective-C 是以 C 语言为基础的，在 C 语言中对空指针进行操作，程序会由于越界访问而崩溃；但是在 Objective-C 中给 nil 发送消息，程序不会崩溃。<a href="http://blog.csdn.net/onlyou930/article/details/7283084">这里</a> 从 arm 层源码对其进行了解释。</p>
+
+<h2 id="objective-c-中的-nsnull">Objective-C 中的 NSNull</h2>
+<h3 id="1-定义">1. 定义</h3>
+<p><strong>NSNull</strong> 定义在 <code class="highlighter-rouge">NSNull.h</code> 文件里：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="cp">#import &lt;Foundation/NSObject.h&gt;
+</span><span class="n">NS_ASSUME_NONNULL_BEGIN</span>
+<span class="k">@interface</span> <span class="nc">NSNull</span> <span class="p">:</span> <span class="nc">NSObject</span> <span class="o">&lt;</span><span class="n">NSCopying</span><span class="p">,</span> <span class="n">NSSecureCoding</span><span class="o">&gt;</span>
+<span class="o">+</span> <span class="p">(</span><span class="n">NSNull</span> <span class="o">*</span><span class="p">)</span><span class="n">null</span><span class="p">;</span>
+<span class="k">@end</span>
+<span class="n">NS_ASSUME_NONNULL_END</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>从上述定义中，我们可知 NSNull 是一个 Objective-C 对象，是一个用于表示空值的类，而且它只有一个单例方法：+[NSNull null]，一般用于在集合对象中保存一个空的占位对象。</p>
+</blockquote>
+
+<h3 id="2-与-nil-区别">2. 与 nil 区别</h3>
+<blockquote>
+  <p>在 Foundation 集合对象（NSArray、NSDictionary、NSSet 等）中， nil 通常被用于表示集合对象结束的标志，因此无法用 nil 来存储一个空值，所以一般用 [NSNull null] 空对象来存储。另外，在 NSDictionary 的 -objectForKey: 方法中，如果当前字典中 key 对应的值不存在时，该方法会返回 nil，表明当前 key 在字典中未添加，但是如果我们想明确表示某一 key 已经在字典中添加，但是它没有值，这时候就可以用 [NSNull null] 来赋值表示。</p>
+</blockquote>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="c1">// 当 NSArray 里遇到 nil 时，就说明这个数组对象的元素截止了，即 NSArray 只关注 nil 之前的对象，nil 之后的对象会被抛弃。
+</span><span class="n">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSArray</span> <span class="nf">arrayWithObjects</span><span class="p">:</span><span class="s">@"one"</span><span class="p">,</span> <span class="s">@"two"</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span>
+
+<span class="c1">// 错误的使用
+</span><span class="n">NSMutableDictionary</span> <span class="o">*</span><span class="n">dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableDictionary</span> <span class="nf">dictionary</span><span class="p">];</span>
+<span class="p">[</span><span class="n">dict</span> <span class="nf">setObject</span><span class="p">:</span><span class="nb">nil</span> <span class="nf">forKey</span><span class="p">:</span><span class="s">@"someKey"</span><span class="p">];</span>
+<span class="c1">// 正确的使用
+</span><span class="n">NSMutableDictionary</span> <span class="o">*</span><span class="n">dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableDictionary</span> <span class="nf">dictionary</span><span class="p">];</span>
+<span class="p">[</span><span class="n">dict</span> <span class="nf">setObject</span><span class="p">:[</span><span class="n">NSNull</span> <span class="nf">null</span><span class="p">]</span> <span class="nf">forKey</span><span class="p">:</span><span class="s">@"someKey"</span><span class="p">];</span>
+</code></pre>
+</div>
+
+<h2 id="结论">结论</h2>
+<blockquote>
+  <p>不管是 NULL、nil 还是 Nil，它们本质上是一样的，都是 (void *)0，只是写法不同。这样做的意义是为了区分不同的数据类型，虽然它们值相同，但我们需要理解它们之间的字面意义并用于不同场景，让代码更加明确，增加可读性。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th><strong>标志</strong></th>
+        <th style="text-align: left"><strong>值</strong></th>
+        <th style="text-align: left"><strong>含义</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>NULL</td>
+        <td style="text-align: left">(void *)0</td>
+        <td style="text-align: left">C 指针的字面空值</td>
+      </tr>
+      <tr>
+        <td>nil</td>
+        <td style="text-align: left">(id)0</td>
+        <td style="text-align: left">Objective-C 对象的字面空值</td>
+      </tr>
+      <tr>
+        <td>Nil</td>
+        <td style="text-align: left">(Class)0</td>
+        <td style="text-align: left">Objective-C 类的字面空值</td>
+      </tr>
+      <tr>
+        <td>NSNull</td>
+        <td style="text-align: left">[NSNull null]</td>
+        <td style="text-align: left">用来表示空值的 Objective-C 对象</td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+
+<h2 id="kniloptions">kNilOptions</h2>
+<p>kNilOptions is an old constant intended to document that the 0 is not just any magic zero, but stands for “no options”. <br />
+如果枚举值需要传入0，但是枚举中又没有定义0，那么就可以使用 kNilOptions，代表不选择现有的枚举值。</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">typedef</span> <span class="nf">NS_OPTIONS</span><span class="p">(</span><span class="n">NSUInteger</span><span class="p">,</span> <span class="n">NSJSONReadingOptions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">NSJSONReadingMutableContainers</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1UL</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">NSJSONReadingMutableLeaves</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1UL</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">NSJSONReadingAllowFragments</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1UL</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">}</span> <span class="n">NS_ENUM_AVAILABLE</span><span class="p">(</span><span class="mi">10</span><span class="n">_7</span><span class="p">,</span> <span class="mi">5</span><span class="n">_0</span><span class="p">);</span>
+
+<span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSJSONSerialization</span> <span class="nf">JSONObjectWithData</span><span class="p">:</span><span class="n">jsonData</span> <span class="nf">options</span><span class="p">:</span><span class="n">kNilOptions</span> <span class="n">error</span><span class="o">:</span><span class="nb">NULL</span><span class="p">];</span>
+</code></pre>
+</div>
+
+<p>此处传入参数 kNilOptions 即解析出来的数据不可改。</p>
+
+<h3 id="reference">Reference</h3>
+<p><a href="http://www.jianshu.com/p/b6282410765b">YYModel超详细解析</a><br />
+<a href="https://kangzubin.com/null-and-nil-in-objective-c/#more">Objective-C 中 NULL、nil、Nil、NSNull 的定义及不同</a><br />
+<a href="http://nshipster.cn/nil/">nil / Nil / NULL / NSNull</a></p>
+
+    
+
+    </article>
+    <div class="share">
+      <div class="share-component"></div>
+    </div>
+    <div class="comment">
+      
+  
+
+
+    </div>
+  </div>
+  <div class="column one-fourth">
+    
+<h3>Search</h3>
+<div id="site_search">
+    <input type="text" id="search_box" placeholder="Search">
+    <button class="btn btn-default" id="site_search_do"><span class="octicon octicon-search"></span></button>
+</div>
+
+<ul id="search_results"></ul>
+
+<link rel="stylesheet" type="text/css" href="/assets/css/modules/sidebar-search.css">
+<script src="/assets/js/lunr.min.js"></script>
+<script src="/assets/js/search.js"></script>
+
+
+    
+<h3 class="mobile-hidden">Post Directory</h3>
+<div id="post-directory-module" class="mobile-hidden">
+  <section class="post-directory">
+  <!-- Links that trigger the jumping -->
+  <!-- Added by javascript below -->
+  <dl></dl>
+  </section>
+</div>
+
+<script src="/assets/js/jquery.toc.js"></script>
+
+  </div>
+</div>
+</section>
+<!-- /section.content -->
+
+    <footer class="container">
+        <div class="site-footer" role="contentinfo">
+            <div class="copyright left mobile-block">
+                    © 2015
+                    <span title="Xuehan Gong">Xuehan Gong</span>
+                    <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+            </div>
+
+            <ul class="site-footer-links right mobile-hidden">
+                <li>
+                    <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+                </li>
+            </ul>
+            <a href="http://github.com/lpgonghan/lpgonghan.github.io" target="_blank" aria-label="view source code">
+                <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+            </a>
+            <ul class="site-footer-links mobile-hidden">
+                
+                <li>
+                    <a href="/" title="首页" target="">首页</a>
+                </li>
+                
+                <li>
+                    <a href="/categories/" title="分类" target="">分类</a>
+                </li>
+                
+                <li>
+                    <a href="/wiki/" title="维基" target="">维基</a>
+                </li>
+                
+                <li>
+                    <a href="/links/" title="链接" target="">链接</a>
+                </li>
+                
+                <li>
+                    <a href="/about/" title="关于" target="">关于</a>
+                </li>
+                
+                <li><a href="/feed.xml"><span class="octicon octicon-rss" style="color:orange;"></span></a></li>
+            </ul>
+
+        </div>
+    </footer>
+    <!-- / footer -->
+    <script src="/assets/vendor/share.js/dist/js/share.min.js"></script>
+    <script src="/assets/js/geopattern.js"></script>
+    <script src="/assets/js/prism.js"></script>
+    <link rel="stylesheet" href="/assets/css/globals/prism.css">
+    <script>
+      jQuery(document).ready(function($) {
+        // geopattern
+        $('.geopattern').each(function(){
+          $(this).geopattern($(this).data('pattern-id'));
+        });
+       // hljs.initHighlightingOnLoad();
+      });
+    </script>
+    
+</body>
+</html>
