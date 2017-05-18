@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <title>Blog 申明 &mdash; 寒咯</title>
+    <title>YYModel源码阅读（二） &mdash; 寒咯</title>
     <link rel="stylesheet" href="/assets/vendor/primer-css/css/primer.css">
     <link rel="stylesheet" href="/assets/vendor/primer-markdown/dist/user-content.min.css">
     <link rel="stylesheet" href="/assets/vendor/octicons/octicons/octicons.css">
@@ -21,28 +21,28 @@
     
 
     
-    <link rel="canonical" href="http://localhost:4000/2017/05/16/Blog/">
+    <link rel="canonical" href="http://localhost:4000/2017/05/17/YYModel02/">
     <link rel="alternate" type="application/atom+xml" title="寒咯" href="/feed.xml">
     <link rel="shortcut icon" href="/icon.ico">
     
-    <meta property="og:title" content="Blog 申明">
+    <meta property="og:title" content="YYModel源码阅读（二）">
       
-    <meta name="keywords" content="Jekyll, GitHub, 博客">
-    <meta name="og:keywords" content="Jekyll, GitHub, 博客">
+    <meta name="keywords" content="YYModel, 解析,  Objective-C, iOS">
+    <meta name="og:keywords" content="YYModel, 解析,  Objective-C, iOS">
       
-    <meta name="description" content="我的博客主题来自这里刚刚搭建，目前只供自己使用，还有很多东西没有来得及修改，很多地方都还是主题博主的设置。如有任何侵权，请马上告知，我接10层锅。实时">
-    <meta name="og:description" content="我的博客主题来自这里刚刚搭建，目前只供自己使用，还有很多东西没有来得及修改，很多地方都还是主题博主的设置。如有任何侵权，请马上告知，我接10层锅。实时">
+    <meta name="description" content="接上篇YYModel源码阅读（一）">
+    <meta name="og:description" content="接上篇YYModel源码阅读（一）">
       
     
     
         
     
-    <meta property="og:url" content="http://localhost:4000/2017/05/16/Blog/">
+    <meta property="og:url" content="http://localhost:4000/2017/05/17/YYModel02/">
     <meta property="og:site_name" content="寒咯">
     <meta property="og:type" content="article">
     <meta property="og:locale" content="zh_CN" />
     
-    <meta property="article:published_time" content="2017-05-16">
+    <meta property="article:published_time" content="2017-05-17">
     
     <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
     <script src="/assets/js/jquery-ui.js"></script>
@@ -83,22 +83,22 @@
     </header>
     <!-- / header -->
 
-    <section class="collection-head small geopattern" data-pattern-id="Blog 申明">
+    <section class="collection-head small geopattern" data-pattern-id="YYModel源码阅读（二）">
 <div class="container">
   <div class="columns">
     <div class="column three-fourths">
       <div class="collection-title">
-        <h1 class="collection-header">Blog 申明</h1>
+        <h1 class="collection-header">YYModel源码阅读（二）</h1>
         <div class="collection-info">
           
           <span class="meta-info">
-            <span class="octicon octicon-calendar"></span> 2017/05/16
+            <span class="octicon octicon-calendar"></span> 2017/05/17
           </span>
           
           
           <span class="meta-info">
             <span class="octicon octicon-file-directory"></span>
-            <a href="/categories/#其它" title="其它">其它</a>
+            <a href="/categories/#iOS" title="iOS">iOS</a>
           </span>
           
         </div>
@@ -112,30 +112,42 @@
 <div class="columns">
   <div class="column three-fourths" >
     <article class="article-content markdown-body">
-    <p>我的博客主题来自<a href="https://github.com/mzlogin/mzlogin.github.io">这里</a>刚刚搭建，目前只供自己使用，还有很多东西没有来得及修改，很多地方都还是主题博主的设置。如有任何侵权，请马上告知，我接10层锅。实时</p>
+    <p>接上篇<a href="https://lpgonghan.github.io/2017/05/16/YYModel/">YYModel源码阅读（一）</a></p>
 
-<p>简述博客搭建过程，主要记录搭建过程中遇到的一些问题，和感兴趣的东西。</p>
+<p>##title</p>
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">modelWithJSON</span><span class="p">:(</span><span class="n">id</span><span class="p">)</span><span class="nv">json</span> <span class="p">{</span>
+    <span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dic</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nf">_yy_dictionaryWithJSON</span><span class="p">:</span><span class="n">json</span><span class="p">];</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">self</span> <span class="nf">modelWithDictionary</span><span class="p">:</span><span class="n">dic</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
-<p>1.搭建的过程比较简单，而且网上有大量资源，而且内容大同小异，以下两篇是我参考的文章：</p>
+<p>这一篇我们继续看看方法中的第二步：</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">modelWithDictionary</span><span class="p">:(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">dictionary</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">dictionary</span> <span class="o">||</span> <span class="n">dictionary</span> <span class="o">==</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">kCFNull</span><span class="p">)</span> <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">dictionary</span> <span class="nf">isKindOfClass</span><span class="p">:[</span><span class="n">NSDictionary</span> <span class="nf">class</span><span class="p">]])</span> <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+    
+    <span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nf">class</span><span class="p">];</span>
+    <span class="n">_YYModelMeta</span> <span class="o">*</span><span class="n">modelMeta</span> <span class="o">=</span> <span class="p">[</span><span class="n">_YYModelMeta</span> <span class="nf">metaWithClass</span><span class="p">:</span><span class="n">cls</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">modelMeta</span><span class="o">-&gt;</span><span class="n">_hasCustomClassFromDictionary</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="n">cls</span> <span class="nf">modelCustomClassForDictionary</span><span class="p">:</span><span class="n">dictionary</span><span class="p">]</span> <span class="p">?:</span> <span class="n">cls</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="n">NSObject</span> <span class="o">*</span><span class="n">one</span> <span class="o">=</span> <span class="p">[</span><span class="n">cls</span> <span class="nf">new</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">one</span> <span class="nf">modelSetWithDictionary</span><span class="p">:</span><span class="n">dictionary</span><span class="p">])</span> <span class="k">return</span> <span class="n">one</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>看具体实现之前，我们先浏览一遍方法注释：</p>
 <ul>
-  <li><a href="http://www.jianshu.com/p/8f843034c7ec">“授人以渔”的教你搭建个人独立博客</a></li>
-  <li><a href="http://www.jianshu.com/p/4fd3cb0a11da">我的 Github 个人博客是怎样炼成的</a></li>
+  <li>方法传入一个字典，返回一个实例对象，并且将字典中的值赋给对象的对应属性变量。</li>
+  <li>JSON/Dictionary 中的对象类型与实例属性不一致时，会按照预设规则自动转换。自动转换不支持的值将会被忽略，以避免各种潜在的崩溃问题。</li>
+  <li>这个方法是线程安全的。</li>
 </ul>
 
-<p>2.Jekyll</p>
-<ul>
-  <li>使用教程 <a href="https://www.youtube.com/watch?v=IINPHVVrF5Q&amp;list=PLWjCJDeWfDdfVEcLGAfdJn_HXyM4Y7_k-">Youtube Jekyll</a></li>
-  <li>用 terminal <code class="highlighter-rouge">cd /repository根目录下</code> 运行 <code class="highlighter-rouge">bundle exec jekyll serve</code> ，然后就可以在浏览器输入 <code class="highlighter-rouge">localhost:4000</code> 进行本地调试。</li>
-  <li>有时运行上面代码的时候会报错<code class="highlighter-rouge">jekyll 3.4.3 | Error:  Address already in use - bind(2) for 127.0.0.1:4000</code>这种情况，需要先杀掉运行进程。</li>
-  <li><code class="highlighter-rouge">ps</code> 命令查看 jekyll 相关进程 PID。</li>
-  <li>kill -9 PID <strong>这里不是指 -9 这个 9 是进程号，而是 kill -9 这一段都是指令，后面还需要跟一个进程号</strong></li>
-</ul>
-
-<p>3.Sublime Text 3</p>
-<ul>
-  <li><a href="http://www.jianshu.com/p/3cb5c6f2421c/">如何优雅的使用 Sublime Text3</a></li>
-  <li><a href="http://blog.csdn.net/github_32886825/article/details/52930195">使用Sublime Text 3进行Markdown 编辑+实时预览</a></li>
-</ul>
 
     
 
